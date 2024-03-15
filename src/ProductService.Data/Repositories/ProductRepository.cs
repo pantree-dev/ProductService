@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ProductService.Common.Exceptions;
 using ProductService.Data.Entities;
 using ProductService.Data.Exceptions;
 using ProductService.Data.Repositories.Interfaces;
@@ -16,13 +17,6 @@ public class ProductRepository : IProductRepository
     
     public async Task<Product> CreateProduct(Product product)
     {
-        var existingProduct = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == product.Id);
-        
-        if(existingProduct != null)
-        {
-            throw new ProductExistsException();
-        }
-        
         await _dbContext.Products.AddAsync(product);
         await _dbContext.SaveChangesAsync();
         return product;
@@ -31,6 +25,21 @@ public class ProductRepository : IProductRepository
 
     public async Task<IEnumerable<Product>> GetAllProducts()
     {
-        return await _dbContext.Products.ToListAsync();
+        return await _dbContext.Products.Where(x => x.Active).ToListAsync();
+    }
+
+    public async Task<Product?> GetProductById(Guid id) => await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
+
+    public async Task<Product?> GetProductByName(string name) => await _dbContext.Products.FirstOrDefaultAsync(p => p.Name == name);
+    public async Task SetDisabled(Guid productId)
+    {
+        var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
+        if (product == null)
+        {
+            throw new NotFoundException();
+        }
+        product.Active = false;
+        product.DisabledDate = DateTime.UtcNow;
+        await _dbContext.SaveChangesAsync();
     }
 }

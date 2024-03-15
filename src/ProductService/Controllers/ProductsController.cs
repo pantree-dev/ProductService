@@ -18,13 +18,26 @@ public class ProductsController(IProductRepository productRepository, IValidator
     
     // PUT api/products
     [HttpPut]
-    public async Task<Product> Put([FromBody]CreateProductDto inputProduct)
+    public async Task<ActionResult<Product>> Put([FromBody]CreateProductDto inputProduct)
     {
 
         ArgumentNullException.ThrowIfNull(inputProduct);
         await createProductValidator.ValidateAndThrowAsync(inputProduct);
 
+        var existingProduct = await productRepository.GetProductByName(inputProduct.Name);
+
+        if (existingProduct != null)
+        {
+            return BadRequest("Product already exists.");
+        }
+
         var newProduct = inputProduct.MapToProduct();
         return await productRepository.CreateProduct(newProduct);
+    }
+
+    [HttpPut("{productId}/disable")]
+    public async Task Disable(Guid productId)
+    {
+        await productRepository.SetDisabled(productId);
     }
 }

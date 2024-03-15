@@ -11,21 +11,31 @@ public class GlobalExceptionHandler : IExceptionHandler
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception,
         CancellationToken cancellationToken)
     {
-        if (exception is BadRequestException or ValidationException)
+        switch (exception)
         {
-            httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            await httpContext.Response.WriteAsync(exception.Message);
-            return true;
+            case BadRequestException:
+                httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                await httpContext.Response.WriteAsync(exception.Message);
+                break;
+            case NotFoundException:
+                httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                await httpContext.Response.WriteAsync(exception.Message);
+                break;
+            case ValidationException validationException:
+                httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                await httpContext.Response.WriteAsJsonAsync(validationException.Errors);
+                break;
+            default:
+                await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
+                {
+                    Status = (int)HttpStatusCode.InternalServerError,
+                    Type = exception.GetType().Name,
+                    Title = "An unexpected error occurred",
+                    Detail = exception.Message,
+                    Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
+                });
+                break;
         }
-
-        await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
-        {
-            Status = (int)HttpStatusCode.InternalServerError,
-            Type = exception.GetType().Name,
-            Title = "An unexpected error occurred",
-            Detail = exception.Message,
-            Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}"
-        });
 
         return true;
     }
