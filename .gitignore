@@ -396,3 +396,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+src/.DS_Store
+.idea/.idea.ProductService/.idea/vcs.xml
+.idea/.idea.ProductService/.idea/indexLayout.xml
+.idea/.idea.ProductService/.idea/aws.xml
+.DS_Store
