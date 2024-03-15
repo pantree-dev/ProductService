@@ -7,13 +7,21 @@ using ProductService.Dtos;
 namespace ProductService.Controllers;
 
 [Route("api/[controller]")]
-public class ProductsController(IProductRepository productRepository, IValidator<CreateProductDto> createProductValidator) : ControllerBase
+public class ProductsController
 {
+    private readonly IProductRepository _productRepository;
+    private readonly IValidator<CreateProductDto> _createProductValidator;
+
+    public ProductsController(IProductRepository productRepository, IValidator<CreateProductDto> createProductValidator):base()
+    {
+        _productRepository = productRepository;
+        _createProductValidator = createProductValidator;
+    }
     // GET api/products
     [HttpGet]
     public async Task<IEnumerable<Product>> Get()
     {
-        return await productRepository.GetAllProducts();
+        return await _productRepository.GetAllProducts();
     }
     
     // PUT api/products
@@ -22,22 +30,22 @@ public class ProductsController(IProductRepository productRepository, IValidator
     {
 
         ArgumentNullException.ThrowIfNull(inputProduct);
-        await createProductValidator.ValidateAndThrowAsync(inputProduct);
+        await _createProductValidator.ValidateAndThrowAsync(inputProduct);
 
-        var existingProduct = await productRepository.GetProductByName(inputProduct.Name);
+        var existingProduct = await _productRepository.GetProductByName(inputProduct.Name);
 
         if (existingProduct != null)
         {
-            return BadRequest("Product already exists.");
+            return new BadRequestResult();
         }
 
         var newProduct = inputProduct.MapToProduct();
-        return await productRepository.CreateProduct(newProduct);
+        return await _productRepository.CreateProduct(newProduct);
     }
 
     [HttpPut("{productId}/disable")]
     public async Task Disable(Guid productId)
     {
-        await productRepository.SetDisabled(productId);
+        await _productRepository.SetDisabled(productId);
     }
 }

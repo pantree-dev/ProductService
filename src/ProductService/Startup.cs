@@ -27,7 +27,7 @@ public class Startup
         RegisterValidators(services);
         services.AddControllers();
         services.RegisterDataServices(dbConnectionString);
-        services.AddExceptionHandler<GlobalExceptionHandler>();
+        // services.AddExceptionHandler<GlobalExceptionHandler>();
     }
     
     private void RegisterValidators(IServiceCollection services)

@@ -1,3 +1,9 @@
 namespace ProductService.Common.Exceptions;
 
-public abstract class BadRequestException(string message) : Exception(message);
+
+public class BadRequestException : Exception
+{
+    public BadRequestException(string message) : base(message)
+    {
+    }
+}

@@ -6,7 +6,7 @@ using ProductService.Common.Exceptions;
 
 namespace ProductService;
 
-public class GlobalExceptionHandler : IExceptionHandler
+public class GlobalExceptionHandler 
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception,
         CancellationToken cancellationToken)
