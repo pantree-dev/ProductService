@@ -6,10 +6,18 @@ using ProductService.Common.Exceptions;
 
 namespace ProductService;
 
-public class GlobalExceptionHandler 
+public class GlobalExceptionHandler
 {
-    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception,
-        CancellationToken cancellationToken)
+    private readonly RequestDelegate _next;
+    private readonly ILogger<GlobalExceptionHandler> _logger;
+
+    public GlobalExceptionHandler(RequestDelegate next, ILogger<GlobalExceptionHandler> logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
+
+    private async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
     {
         switch (exception)
         {
@@ -36,7 +44,17 @@ public class GlobalExceptionHandler
                 });
                 break;
         }
+    }
 
-        return true;
+    public async Task InvokeAsync(HttpContext httpContext)
+    {
+        try
+        {
+            await _next(httpContext);
+        }
+        catch (Exception ex)
+        {
+            await HandleExceptionAsync(httpContext, ex);
+        }
     }
 }

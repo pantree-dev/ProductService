@@ -27,7 +27,6 @@ public class Startup
         RegisterValidators(services);
         services.AddControllers();
         services.RegisterDataServices(dbConnectionString);
-        // services.AddExceptionHandler<GlobalExceptionHandler>();
     }
     
     private void RegisterValidators(IServiceCollection services)
@@ -47,6 +46,7 @@ public class Startup
         app.UseExceptionHandler( opt => {});
         app.UseRouting();
         app.UseAuthorization();
+        app.UseMiddleware<GlobalExceptionHandler>();
 
         app.UseEndpoints(endpoints =>
         {
