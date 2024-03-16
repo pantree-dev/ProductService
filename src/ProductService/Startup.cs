@@ -2,6 +2,7 @@
 using ProductService.Data;
 using ProductService.Dtos;
 using ProductService.Validators;
+using Serilog;
 
 namespace ProductService;
 
@@ -26,7 +27,7 @@ public class Startup
 
         RegisterValidators(services);
         services.AddControllers();
-        services.RegisterDataServices(dbConnectionString);
+       services.RegisterDataServices(dbConnectionString);
     }
     
     private void RegisterValidators(IServiceCollection services)
@@ -47,7 +48,7 @@ public class Startup
         app.UseRouting();
         app.UseAuthorization();
         app.UseMiddleware<GlobalExceptionHandler>();
-
+        app.UseSerilogRequestLogging();
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();

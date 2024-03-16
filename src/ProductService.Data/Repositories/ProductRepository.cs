@@ -38,6 +38,12 @@ public class ProductRepository : IProductRepository
         {
             throw new NotFoundException();
         }
+
+        if (product.Active == false)
+        {
+            return;
+        }
+        
         product.Active = false;
         product.DisabledDate = DateTime.UtcNow;
         await _dbContext.SaveChangesAsync();

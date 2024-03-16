@@ -17,7 +17,7 @@ public class GlobalExceptionHandler
         _logger = logger;
     }
 
-    private async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
+    private static async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
     {
         switch (exception)
         {

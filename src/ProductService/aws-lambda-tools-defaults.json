@@ -6,7 +6,7 @@
     "All the command line options for the Lambda command can be specified in this file."
   ],
   "profile": "",
-  "region": "eu-west1",
+  "region": "eu-west-1",
   "configuration": "Release",
   "s3-prefix": "ProductService/",
   "template": "serverless.template",

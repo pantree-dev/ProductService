@@ -1,3 +1,5 @@
+using Serilog;
+
 namespace ProductService;
 
 /// <summary>
@@ -27,8 +29,7 @@ public class LambdaEntryPoint :
     /// <param name="builder"></param>
     protected override void Init(IWebHostBuilder builder)
     {
-        builder
-            .UseStartup<Startup>();
+        builder.UseStartup<Startup>();
     }
 
     /// <summary>
@@ -40,5 +41,10 @@ public class LambdaEntryPoint :
     /// <param name="builder"></param>
     protected override void Init(IHostBuilder builder)
     {
+        builder.UseSerilog((context, services, configuration) => configuration
+            .ReadFrom.Configuration(context.Configuration)
+            .ReadFrom.Services(services)
+            .Enrich.FromLogContext()
+            .WriteTo.Console());
     }
 }

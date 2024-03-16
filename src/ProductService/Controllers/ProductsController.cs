@@ -7,7 +7,7 @@ using ProductService.Dtos;
 namespace ProductService.Controllers;
 
 [Route("api/[controller]")]
-public class ProductsController
+public class ProductsController : ControllerBase
 {
     private readonly IProductRepository _productRepository;
     private readonly IValidator<CreateProductDto> _createProductValidator;
@@ -36,7 +36,7 @@ public class ProductsController
 
         if (existingProduct != null)
         {
-            return new BadRequestResult();
+            return BadRequest("Product with the same name already exists.");
         }
 
         var newProduct = inputProduct.MapToProduct();
