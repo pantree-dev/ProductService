@@ -18,16 +18,16 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container
     public void ConfigureServices(IServiceCollection services)
     {
-        var dbConnectionString = Configuration.GetConnectionString("ProductDb");
+        // var dbConnectionString = Configuration.GetConnectionString("ProductDb");
         
-        if(dbConnectionString == null)
-        {
-            throw new ArgumentNullException("ProductDb connection string is not found");
-        }
+        // if(dbConnectionString == null)
+        // {
+        //     throw new ArgumentNullException("ProductDb connection string is not found");
+        // }
 
         RegisterValidators(services);
         services.AddControllers();
-       services.RegisterDataServices(dbConnectionString);
+    //    services.RegisterDataServices(dbConnectionString);
     }
     
     private void RegisterValidators(IServiceCollection services)
